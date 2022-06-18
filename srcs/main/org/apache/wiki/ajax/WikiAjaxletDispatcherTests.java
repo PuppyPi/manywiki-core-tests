@@ -20,7 +20,6 @@ package org.apache.wiki.ajax;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static rebound.util.collections.BasicCollectionUtilities.*;
-import org.apache.wiki.plugin.plugins.SampleAjaxPlugin;
 import org.junit.Test;
 import rebound.util.collections.PairOrdered;
 
@@ -196,9 +195,8 @@ public class WikiAjaxletDispatcherTests
 	@Test
 	public void testRegistering() throws Exception
 	{
-		//Use the plugin SampleAjaxPlugin as a dolly
-		String n = SampleAjaxPlugin.AJAXLET_NAME;
-		WikiAjaxlet a = new SampleAjaxPlugin();
+		String n = "λfoo";
+		WikiAjaxlet a = (request, response, actionName, params) -> {};
 		
 		assertNull(WikiAjaxletDispatcher.findAjaxletByName("dslfkjsflksdjfdslkjfdslfdskjlfdskjf"));
 		assertNull(WikiAjaxletDispatcher.findAjaxletByName(n));
