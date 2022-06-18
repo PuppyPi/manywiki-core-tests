@@ -32,26 +32,86 @@ public class WikiAjaxletDispatcherTests
 	@Test
 	public void testParsingName() throws Exception
 	{
-		final String[] uris = new String[]
+		final PairOrdered<String, String>[] testdata = new PairOrdered[]
 		{
-		"/ajax/MyPlugin",
-		"/ajax/MyPlugin/",
-		"/ajax/MyPlugin/Friend",
-		"/ajax/MyPlugin?",
-		"/ajax/MyPlugin?param=123&param=231",
-		"/ajax/MyPlugin#hashCode?param=123&param=231",
-		"/ajax/MyPlugin?param=123&param=231#hashCode",
+		pair("", null),
+		pair("/", null),
+		pair("/aj", null),
+		pair("/ajax", null),
+		pair("/ajax/", null),
 		
-		//TODO-PP Why does it need to handle these? Those are URLs not HTTP URI's! XD
-		//	"http://google.com.au/test/ajax/MyPlugin#hashCode?param=123&param=231",
-		//	"/test//ajax/MyPlugin#hashCode?param=123&param=231",
-		//	"http://localhost:8080/ajax/MyPlugin#hashCode?param=123&param=231"
+		pair("/ajax/MyPlugin", "MyPlugin"),
+		pair("/ajax/MyPlugin/", "MyPlugin"),
+		
+		pair("/ajax/MyPlugin/Friend", "MyPlugin"),
+		pair("/ajax/MyPlugin/Friend/", "MyPlugin"),
+		
+		
+		pair("/ajax/λ/Friend", "λ"),
+		pair("/ajax/%CE%BB/Friend", "λ"),
+		pair("/ajax/%ce%bb/Friend", "λ"),
+		pair("/ajax/%Ce%bB/Friend", "λ"),
+		
+		
+		pair("+", null),
+		pair("+/", null),
+		pair("/+", null),
+		pair("/aj+", null),
+		pair("/aj+ax", null),
+		pair("/ajax+/", null),
+		pair("/ajax+/+", null),
+		pair("/ajax/+", " "),
+		
+		pair("/ajax/My+Plugin", "My Plugin"),
+		pair("/ajax/My+Plugin/", "My Plugin"),
+		
+		pair("/ajax/MyPlugin/Friend+", "MyPlugin"),
+		pair("/ajax/MyPlugin/Friend+/", "MyPlugin"),
+		
+		pair("/ajax/My+Plugin/Friend", "My Plugin"),
+		pair("/ajax/My+Plugin/Friend/", "My Plugin"),
+		
+		pair("/ajax/My+Plugin/Friend+", "My Plugin"),
+		pair("/ajax/My+Plugin/Friend+/", "My Plugin"),
+		
+		
+		pair("%2F", null),
+		pair("%2F/", null),
+		pair("/%2F", null),
+		pair("/aj%2F", null),
+		pair("/aj%2Fax", null),
+		pair("/ajax%2F/", null),
+		pair("/ajax%2F/%2F", null),
+		pair("/ajax/%2F", "/"),
+		
+		pair("/ajax/My%2FPlugin", "My/Plugin"),
+		pair("/ajax/My%2FPlugin/", "My/Plugin"),
+		pair("/ajax/My%2FPlugin/A", "My/Plugin"),
+		pair("/ajax/My%2FPlugin/%2F", "My/Plugin"),
+		pair("/ajax/MyPlugin%2F", "MyPlugin/"),
+		pair("/ajax/MyPlugin%2F/", "MyPlugin/"),
+		pair("/ajax/MyPlugin%2F/A", "MyPlugin/"),
+		pair("/ajax/MyPlugin%2F/%2F", "MyPlugin/"),
+		pair("/ajax/My%2FPlugin%2F", "My/Plugin/"),
+		pair("/ajax/My%2FPlugin%2F/", "My/Plugin/"),
+		pair("/ajax/My%2FPlugin%2F/A", "My/Plugin/"),
+		pair("/ajax/My%2FPlugin%2F/%2F", "My/Plugin/"),
+		
+		pair("/ajax/MyPlugin/Friend%2F", "MyPlugin"),
+		pair("/ajax/MyPlugin/Friend%2F/", "MyPlugin"),
+		
+		pair("/ajax/My%2FPlugin/Friend", "My/Plugin"),
+		pair("/ajax/My%2FPlugin/Friend/", "My/Plugin"),
+		
+		pair("/ajax/My%2FPlugin/Friend%2F", "My/Plugin"),
+		pair("/ajax/My%2FPlugin/Friend%2F/", "My/Plugin"),
 		};
 		
-		for (final String uri : uris)
+		
+		for (PairOrdered<String, String> pair : testdata)
 		{
-			final String ajaxletName = WikiAjaxletDispatcher.getAjaxletName(uri, "/ajax/");
-			Assertions.assertEquals("MyPlugin", ajaxletName);
+			final String ajaxletAction = WikiAjaxletDispatcher.getAjaxletName(pair.getA(), "/ajax/");
+			Assertions.assertEquals(pair.getB(), ajaxletAction);
 		}
 	}
 	
@@ -69,27 +129,60 @@ public class WikiAjaxletDispatcherTests
 		pair("/ajax/", null),
 		
 		pair("/ajax/MyPlugin", null),
-		pair("/ajax/MyPlugin?", null),
-		pair("/ajax/MyPlugin?param=123&param=231", null),
-		pair("/ajax/MyPlugin#hashCode?param=123&param=231", null),
-		pair("/ajax/MyPlugin?param=123&param=231#hashCode", null),
 		pair("/ajax/MyPlugin/", null),
-		pair("/ajax/MyPlugin/?", null),
-		pair("/ajax/MyPlugin/?param=123&param=231", null),
-		pair("/ajax/MyPlugin/#hashCode?param=123&param=231", null),
-		pair("/ajax/MyPlugin/?param=123&param=231#hashCode", null),
 		
 		pair("/ajax/MyPlugin/Friend", "Friend"),
-		pair("/ajax/MyPlugin/Friend?", "Friend"),
-		pair("/ajax/MyPlugin/Friend?param=123&param=231", "Friend"),
-		pair("/ajax/MyPlugin/Friend#hashCode?param=123&param=231", "Friend"),
-		pair("/ajax/MyPlugin/Friend?param=123&param=231#hashCode", "Friend"),
 		pair("/ajax/MyPlugin/Friend/", "Friend"),
-		pair("/ajax/MyPlugin/Friend/?", "Friend"),
-		pair("/ajax/MyPlugin/Friend/?param=123&param=231", "Friend"),
-		pair("/ajax/MyPlugin/Friend/#hashCode?param=123&param=231", "Friend"),
-		pair("/ajax/MyPlugin/Friend/?param=123&param=231#hashCode", "Friend"),
+		
+		
+		pair("/ajax/MyPlugin/λ", "λ"),
+		pair("/ajax/MyPlugin/%CE%BB","λ"),
+		pair("/ajax/MyPlugin/%ce%bb", "λ"),
+		pair("/ajax/MyPlugin/%Ce%bB", "λ"),
+		
+		
+		pair("+", null),
+		pair("+/", null),
+		pair("/+", null),
+		pair("/aj+", null),
+		pair("/aj+ax", null),
+		pair("/ajax+/", null),
+		pair("/ajax+/+", null),
+		
+		pair("/ajax/My+Plugin", null),
+		pair("/ajax/My+Plugin/", null),
+		
+		pair("/ajax/MyPlugin/Friend+", "Friend "),
+		pair("/ajax/MyPlugin/Friend+/", "Friend "),
+		
+		pair("/ajax/My+Plugin/Friend", "Friend"),
+		pair("/ajax/My+Plugin/Friend/", "Friend"),
+		
+		pair("/ajax/My+Plugin/Friend+", "Friend "),
+		pair("/ajax/My+Plugin/Friend+/", "Friend "),
+		
+		
+		pair("%2F", null),
+		pair("%2F/", null),
+		pair("/%2F", null),
+		pair("/aj%2F", null),
+		pair("/aj%2Fax", null),
+		pair("/ajax%2F/", null),
+		pair("/ajax%2F/%2F", null),
+		
+		pair("/ajax/My%2FPlugin", null),
+		pair("/ajax/My%2FPlugin/", null),
+		
+		pair("/ajax/MyPlugin/Friend%2F", "Friend/"),
+		pair("/ajax/MyPlugin/Friend%2F/", "Friend/"),
+		
+		pair("/ajax/My%2FPlugin/Friend", "Friend"),
+		pair("/ajax/My%2FPlugin/Friend/", "Friend"),
+		
+		pair("/ajax/My%2FPlugin/Friend%2F", "Friend/"),
+		pair("/ajax/My%2FPlugin/Friend%2F/", "Friend/"),
 		};
+		
 		
 		for (PairOrdered<String, String> pair : testdata)
 		{
