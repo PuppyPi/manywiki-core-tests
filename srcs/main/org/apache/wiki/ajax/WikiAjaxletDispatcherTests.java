@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.ajax;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static rebound.util.collections.BasicCollectionUtilities.*;
 import org.apache.wiki.plugin.plugins.SampleAjaxPlugin;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import rebound.util.collections.PairOrdered;
 
 /**
@@ -111,7 +111,7 @@ public class WikiAjaxletDispatcherTests
 		for (PairOrdered<String, String> pair : testdata)
 		{
 			final String ajaxletAction = WikiAjaxletDispatcher.getAjaxletName(pair.getA(), "/ajax/");
-			Assertions.assertEquals(pair.getB(), ajaxletAction);
+			assertEquals(pair.getB(), ajaxletAction);
 		}
 	}
 	
@@ -187,7 +187,7 @@ public class WikiAjaxletDispatcherTests
 		for (PairOrdered<String, String> pair : testdata)
 		{
 			final String ajaxletAction = WikiAjaxletDispatcher.getAjaxletAction(pair.getA(), "/ajax/");
-			Assertions.assertEquals(pair.getB(), ajaxletAction);
+			assertEquals(pair.getB(), ajaxletAction);
 		}
 	}
 	
@@ -196,13 +196,16 @@ public class WikiAjaxletDispatcherTests
 	@Test
 	public void testRegistering() throws Exception
 	{
-		// The plugin SampleAjaxPlugin
+		//Use the plugin SampleAjaxPlugin as a dummy
 		String n = SampleAjaxPlugin.AJAXLET_NAME;
-		WikiAjaxletDispatcher.registerAjaxlet(n, new SampleAjaxPlugin());
-		final WikiAjaxlet ajaxlet = WikiAjaxletDispatcher.findAjaxletByName(n);
-		Assertions.assertNotNull(ajaxlet);
-		Assertions.assertTrue(ajaxlet instanceof SampleAjaxPlugin);
+		WikiAjaxlet a = new SampleAjaxPlugin();
 		
-		Assertions.assertNull(WikiAjaxletDispatcher.findAjaxletByName("dslfkjsflksdjfdslkjfdslfdskjlfdskjf"));
+		assertNull(WikiAjaxletDispatcher.findAjaxletByName("dslfkjsflksdjfdslkjfdslfdskjlfdskjf"));
+		assertNull(WikiAjaxletDispatcher.findAjaxletByName(n));
+		
+		WikiAjaxletDispatcher.registerAjaxlet(n, a);
+		
+		assertNull(WikiAjaxletDispatcher.findAjaxletByName("dslfkjsflksdjfdslkjfdslfdskjlfdskjf"));
+		assertTrue(WikiAjaxletDispatcher.findAjaxletByName(n) == a);
 	}
 }
