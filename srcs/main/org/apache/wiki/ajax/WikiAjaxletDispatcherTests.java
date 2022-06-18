@@ -196,7 +196,7 @@ public class WikiAjaxletDispatcherTests
 	@Test
 	public void testRegistering() throws Exception
 	{
-		//Use the plugin SampleAjaxPlugin as a dummy
+		//Use the plugin SampleAjaxPlugin as a dolly
 		String n = SampleAjaxPlugin.AJAXLET_NAME;
 		WikiAjaxlet a = new SampleAjaxPlugin();
 		
